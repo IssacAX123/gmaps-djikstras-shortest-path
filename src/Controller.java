@@ -1,13 +1,21 @@
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-
+import Algorithm.ConvertToArray;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Circle;
+import javafx.scene.paint.Color;
 import java.awt.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Controller {
 
@@ -15,17 +23,47 @@ public class Controller {
     public Button addressSubmitBtn;
     public ImageView mapImageView;
     public TextField addressField;
+    public AnchorPane pane;
 
-    int[][] points = new int[2][2];
+    double[][] points = new double[2][2];
+    ArrayList<Circle> drawnPoints = new ArrayList<Circle>();
+
     MapRetriever mapRetriever = new MapRetriever();
 
 
 
     public void selectPoint(MouseEvent event){
+        if(Arrays.deepEquals(points, new double[][]{{0, 0}, {0, 0}})){
+            points[0][0] = event.getX()+5;
+            points[0][1] = event.getY()+100;
+            drawPoints();
+        }else if(Arrays.equals(points[1], new double[]{0, 0})){
+            points[1][0] = event.getX()+5;
+            points[1][1] = event.getY()+100;
+            drawPoints();
+            calculate();
+        }
+    }
 
+    public void drawPoints(){
+        pane.getChildren().removeAll(drawnPoints);
+        for (double[] point: points){
+            drawPoint(point);
+        }
+    }
+
+    public void drawPoint(double[] point){
+        if (!Arrays.equals(point, new double[]{0.0, 0.0})) {
+            Circle circle = new Circle(point[0], point[1], 4.0f);
+            circle.setFill(Color.RED);
+            drawnPoints.add(circle);
+            pane.getChildren().add(circle);
+        }
     }
 
     public void getAddress(ActionEvent event) throws InterruptedException {
+        pane.getChildren().removeAll(drawnPoints);
+        points = new double[][]{{0, 0}, {0, 0}};
         final String file;
         final String address;
         java.io.File folder = new java.io.File(System.getProperty("user.dir") + "\\src\\images");
@@ -48,19 +86,20 @@ public class Controller {
         while( !needed.exists() ){
             Thread.sleep(3000);
             needed = new java.io.File(System.getProperty("user.dir") + "\\src\\images\\" + address+".png");
-            System.out.println(needed);
 
         }
-        System.out.println(needed.exists());
         java.io.File finalNeeded = needed;
         Platform.runLater(new Runnable(){
             @Override
             public void run() {
                 System.out.println(finalNeeded.toURI().toString());
                 mapImageView.setImage(new Image(finalNeeded.toURI().toString()));
-                System.out.println("fin 2");
                 Image img = mapImageView.getImage();
             }
         });
+    }
+
+    public void calculate(){
+
     }
 }
