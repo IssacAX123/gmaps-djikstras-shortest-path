@@ -10,7 +10,7 @@ public class MapRetriever {
     String baseUrl = "https://maps.googleapis.com/maps/api/staticmap?";
     String center = "center=";
     String zoom = "zoom=15&";
-    String size= "size=135x135&";
+    String size= "size=270x270&";
     String scale = "scale=1&";
     String styleLabels = "style=feature:all|element:labels|visibility:off&";
     String styleRoads = "style=feature:road|color:0xffffff";
