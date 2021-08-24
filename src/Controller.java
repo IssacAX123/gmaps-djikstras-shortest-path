@@ -13,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
 import java.awt.*;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,10 +30,11 @@ public class Controller {
     ArrayList<Circle> drawnPoints = new ArrayList<Circle>();
 
     MapRetriever mapRetriever = new MapRetriever();
+    String fileName;
 
 
 
-    public void selectPoint(MouseEvent event){
+    public void selectPoint(MouseEvent event) throws IOException {
         if(Arrays.deepEquals(points, new double[][]{{0, 0}, {0, 0}})){
             points[0][0] = event.getX()+5;
             points[0][1] = event.getY()+100;
@@ -80,13 +82,13 @@ public class Controller {
 
         String tmpAddress = addressField.getText();
         address = tmpAddress.replaceAll("\\s", "+");
+        fileName = address+".png";
         mapRetriever.getMap(address);
         java.io.File needed = new java.io.File(System.getProperty("user.dir") + "\\src\\images\\" + address+".png");
         Thread.sleep(3000);
         while( !needed.exists() ){
             Thread.sleep(3000);
             needed = new java.io.File(System.getProperty("user.dir") + "\\src\\images\\" + address+".png");
-
         }
         java.io.File finalNeeded = needed;
         Platform.runLater(new Runnable(){
@@ -99,7 +101,7 @@ public class Controller {
         });
     }
 
-    public void calculate(){
-
+    public void calculate() throws IOException {
+       ConvertToArray img_grid = new ConvertToArray(fileName);
     }
 }
