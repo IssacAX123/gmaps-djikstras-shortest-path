@@ -3,6 +3,7 @@ package Algorithm;
 import org.opencv.core.Mat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.PriorityQueue;
 
 public class Djikstra {
@@ -21,8 +22,8 @@ public class Djikstra {
 
         matrix = new Pixel[rows][cols];
 
-        for(int r =0; r < rows-1; r++){
-            for(int c =0; c < cols-1; c++){
+        for(int r =0; r < rows; r++){
+            for(int c =0; c < cols; c++){
                 matrix[r][c] = new Pixel(c, r);
                 matrix[r][c].setQueueIndex(pq.size());
                 pq.add(matrix[r][c]);
@@ -39,7 +40,7 @@ public class Djikstra {
     }
 
     public Pixel[] getNeighbours(int r, int c){
-        int[] shape = {matrix[0].length, matrix.length};
+        int[] shape = {matrix.length, matrix[0].length};
         Pixel[] neighbours = new Pixel[4];
         if (r > 0 && !matrix[r-1][c].processed){
             neighbours[0] = matrix[r-1][c];
@@ -50,7 +51,7 @@ public class Djikstra {
         if (c > 0 && !matrix[r][c-1].processed){
             neighbours[2] = matrix[r][c-1];
         }
-        if (c < shape[1] && !matrix[r][c+1].processed){
+        if (c < shape[1] -1 && !matrix[r][c+1].processed){
             neighbours[3] = matrix[r][c+1];
         }
         return neighbours;
@@ -59,8 +60,9 @@ public class Djikstra {
     public ArrayList<int[]> solve(){
         while (pq.size() > 0){
             Pixel unproccedNodes = pq.poll();
-            assert pq.peek() != null;
-            pq.peek().setQueueIndex(0);
+            if(pq.peek() != null){
+                pq.peek().setQueueIndex(0);
+            }
             unproccedNodes.processed = true;
 
            Pixel[] neighbours = getNeighbours(unproccedNodes.y, unproccedNodes.x);
@@ -77,11 +79,16 @@ public class Djikstra {
            }
         }
         ArrayList<int[]> path = new ArrayList<int[]>();
+        System.out.println("sink");
+        System.out.println(Arrays.toString(sink));
         Pixel iterator = matrix[sink[1]][sink[0]];
         path.add(new int[]{sink[1], sink[0]});
         while (iterator.y != sink[0] || iterator.x != sink[1]){
             path.add(new int[]{iterator.x, iterator.y});
-            iterator = matrix[iterator.parentY][iterator.parentX];
+            if (iterator.parentY != null && iterator.parentX != null){
+                iterator = matrix[iterator.parentY][iterator.parentX];
+            }
+
         }
         path.add(new int[]{source[1], source[0]});
         return path;

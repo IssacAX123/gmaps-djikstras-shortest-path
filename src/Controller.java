@@ -1,3 +1,4 @@
+import Algorithm.Djikstra;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,8 @@ import Algorithm.ConvertToArray;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
+import org.opencv.core.Mat;
+
 import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -26,7 +29,7 @@ public class Controller {
     public TextField addressField;
     public AnchorPane pane;
 
-    double[][] points = new double[2][2];
+    int[][] points = new int[2][2];
     ArrayList<Circle> drawnPoints = new ArrayList<Circle>();
 
     MapRetriever mapRetriever = new MapRetriever();
@@ -35,13 +38,14 @@ public class Controller {
 
 
     public void selectPoint(MouseEvent event) throws IOException {
-        if(Arrays.deepEquals(points, new double[][]{{0, 0}, {0, 0}})){
-            points[0][0] = event.getX()+5;
-            points[0][1] = event.getY()+100;
+        System.out.println(Arrays.deepEquals(points, new int[][]{{0, 0}, {0, 0}}));
+        if(Arrays.deepEquals(points, new int[][]{{0, 0}, {0, 0}})){
+            points[0][0] = (int)event.getX()+5;
+            points[0][1] = (int)event.getY()+100;
             drawPoints();
-        }else if(Arrays.equals(points[1], new double[]{0, 0})){
-            points[1][0] = event.getX()+5;
-            points[1][1] = event.getY()+100;
+        }else if(Arrays.equals(points[1], new int[]{0, 0})){
+            points[1][0] = (int)event.getX()+5;
+            points[1][1] = (int)event.getY()+100;
             drawPoints();
             calculate();
         }
@@ -49,13 +53,13 @@ public class Controller {
 
     public void drawPoints(){
         pane.getChildren().removeAll(drawnPoints);
-        for (double[] point: points){
+        for (int[] point: points){
             drawPoint(point);
         }
     }
 
-    public void drawPoint(double[] point){
-        if (!Arrays.equals(point, new double[]{0.0, 0.0})) {
+    public void drawPoint(int[] point){
+        if (!Arrays.equals(point, new int[]{0, 0})) {
             Circle circle = new Circle(point[0], point[1], 4.0f);
             circle.setFill(Color.RED);
             drawnPoints.add(circle);
@@ -65,7 +69,7 @@ public class Controller {
 
     public void getAddress(ActionEvent event) throws InterruptedException {
         pane.getChildren().removeAll(drawnPoints);
-        points = new double[][]{{0, 0}, {0, 0}};
+        points = new int[][]{{0, 0}, {0, 0}};
         final String file;
         final String address;
         java.io.File folder = new java.io.File(System.getProperty("user.dir") + "\\src\\images");
@@ -76,7 +80,7 @@ public class Controller {
             java.io.File needed = new java.io.File(System.getProperty("user.dir") + "\\src\\images\\" + file);
             if(needed.exists()){
                 needed.delete();
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             }
         }
 
@@ -85,9 +89,9 @@ public class Controller {
         fileName = address+".png";
         mapRetriever.getMap(address);
         java.io.File needed = new java.io.File(System.getProperty("user.dir") + "\\src\\images\\" + address+".png");
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         while( !needed.exists() ){
-            Thread.sleep(3000);
+            Thread.sleep(2000);
             needed = new java.io.File(System.getProperty("user.dir") + "\\src\\images\\" + address+".png");
         }
         java.io.File finalNeeded = needed;
@@ -103,5 +107,9 @@ public class Controller {
 
     public void calculate() throws IOException {
        ConvertToArray img_grid = new ConvertToArray(fileName);
+       Mat img = img_grid.getMatrix();
+        Djikstra solution = new Djikstra(img, points[0], points[1]);
+        ArrayList<int[]> path = solution.solve();
+        System.out.println(path);
     }
 }
