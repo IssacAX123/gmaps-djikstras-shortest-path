@@ -61,7 +61,7 @@ public class Controller {
 
     public void drawPoint(int[] point){
         if (!Arrays.equals(point, new int[]{0, 0})) {
-            Circle circle = new Circle(point[0], point[1], 4.0f);
+            Circle circle = new Circle(point[0], point[1], 5.0f);
             circle.setFill(Color.RED);
             drawnPoints.add(circle);
             pane.getChildren().add(circle);
@@ -109,15 +109,15 @@ public class Controller {
     public void calculate() throws IOException {
         ConvertToArray img_grid = new ConvertToArray(fileName);
         Mat img = img_grid.getMatrix();
-        points[0] = new int[]{(points[0][0]-5)/4, (points[0][1]-101)/4};
-        points[1] = new int[]{(points[1][0]-5)/4, (points[1][1]-101)/4};
+        points[0] = new int[]{(points[0][0]-5)/2, (points[0][1]-101)/2};
+        points[1] = new int[]{(points[1][0]-5)/2, (points[1][1]-101)/2};
         Djikstra solution = new Djikstra(img, points[0], points[1]);
         ArrayList<int[]> paths = solution.solve();
         System.out.println(Arrays.deepToString(points));
         for (int[] path : paths){
             System.out.println(Arrays.toString(path));
-            Circle c = new Circle((path[0]*4)+5, (path[1]*4)+101, 1);
-            c.setFill(Color.RED);
+            Circle c = new Circle((path[0]*2)+5, (path[1]*2)+101, 2);
+            c.setFill(Color.BLUE);
             drawnPoints.add(c);
             pane.getChildren().add(c);
         }
