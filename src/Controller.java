@@ -1,4 +1,5 @@
 import Algorithm.Djikstra;
+import Algorithm.Pixel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,11 +42,11 @@ public class Controller {
         System.out.println(Arrays.deepEquals(points, new int[][]{{0, 0}, {0, 0}}));
         if(Arrays.deepEquals(points, new int[][]{{0, 0}, {0, 0}})){
             points[0][0] = (int)event.getX()+5;
-            points[0][1] = (int)event.getY()+100;
+            points[0][1] = (int)event.getY()+101;
             drawPoints();
         }else if(Arrays.equals(points[1], new int[]{0, 0})){
             points[1][0] = (int)event.getX()+5;
-            points[1][1] = (int)event.getY()+100;
+            points[1][1] = (int)event.getY()+101;
             drawPoints();
             calculate();
         }
@@ -106,10 +107,19 @@ public class Controller {
     }
 
     public void calculate() throws IOException {
-       ConvertToArray img_grid = new ConvertToArray(fileName);
-       Mat img = img_grid.getMatrix();
+        ConvertToArray img_grid = new ConvertToArray(fileName);
+        Mat img = img_grid.getMatrix();
+        points[0] = new int[]{(points[0][0]-5)/4, (points[0][1]-101)/4};
+        points[1] = new int[]{(points[1][0]-5)/4, (points[1][1]-101)/4};
         Djikstra solution = new Djikstra(img, points[0], points[1]);
-        ArrayList<int[]> path = solution.solve();
-        System.out.println(path);
+        ArrayList<int[]> paths = solution.solve();
+        System.out.println(Arrays.deepToString(points));
+        for (int[] path : paths){
+            System.out.println(Arrays.toString(path));
+            Circle c = new Circle((path[0]*4)+5, (path[1]*4)+101, 1);
+            c.setFill(Color.RED);
+            drawnPoints.add(c);
+            pane.getChildren().add(c);
+        }
     }
 }

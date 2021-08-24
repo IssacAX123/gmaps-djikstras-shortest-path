@@ -26,10 +26,17 @@ public class Djikstra {
             for(int c =0; c < cols; c++){
                 matrix[r][c] = new Pixel(c, r);
                 matrix[r][c].setQueueIndex(pq.size());
-                pq.add(matrix[r][c]);
+                double[] tmpColor = img.get(r, c);
+                if (tmpColor[0] >250 && tmpColor[1] >250 && tmpColor[2] >250){
+                    pq.add(matrix[r][c]);
+                }
             }
         }
         matrix[source[1]][source[0]].setDistance(0);
+        matrix[source[1]][source[0]].setQueueIndex(0);
+        pq.remove(matrix[source[1]][source[0]]);
+        pq.add(matrix[source[1]][source[0]]);
+        System.out.println("");
     }
 
     public double getDistance(int[] unproccedNodesCoords, int[] neighboursCoords){
@@ -74,6 +81,7 @@ public class Djikstra {
                        neighbour.parentX = unproccedNodes.x;
                        neighbour.parentY = unproccedNodes.y;
                        pq.remove(neighbour);
+                       pq.add(neighbour);
                    }
                }
            }
@@ -82,15 +90,18 @@ public class Djikstra {
         System.out.println("sink");
         System.out.println(Arrays.toString(sink));
         Pixel iterator = matrix[sink[1]][sink[0]];
-        path.add(new int[]{sink[1], sink[0]});
+        path.add(new int[]{sink[0], sink[1]});
         while (iterator.y != sink[0] || iterator.x != sink[1]){
             path.add(new int[]{iterator.x, iterator.y});
             if (iterator.parentY != null && iterator.parentX != null){
                 iterator = matrix[iterator.parentY][iterator.parentX];
+            }else{
+                System.out.println(String.valueOf(iterator.x) + " " + String.valueOf(iterator.y));
+                break;
             }
 
         }
-        path.add(new int[]{source[1], source[0]});
+        path.add(new int[]{source[0], source[1]});
         return path;
     }
 
