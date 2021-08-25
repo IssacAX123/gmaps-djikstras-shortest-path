@@ -109,14 +109,14 @@ public class Controller {
     public void calculate() throws IOException {
         ConvertToArray img_grid = new ConvertToArray(fileName);
         Mat img = img_grid.getMatrix();
-        points[0] = new int[]{(points[0][0]-5)/2, (points[0][1]-101)/2};
-        points[1] = new int[]{(points[1][0]-5)/2, (points[1][1]-101)/2};
+        points[0] = new int[]{(int) ((points[0][0]-5)/1.5), (int) ((points[0][1]-101)/1.5)};
+        points[1] = new int[]{(int) ((points[1][0]-5)/1.5), (int) ((points[1][1]-101)/1.5)};
         Djikstra solution = new Djikstra(img, points[0], points[1]);
         ArrayList<int[]> paths = solution.solve();
         System.out.println(Arrays.deepToString(points));
         for (int[] path : paths){
             System.out.println(Arrays.toString(path));
-            Circle c = new Circle((path[0]*2)+5, (path[1]*2)+101, 2);
+            Circle c = new Circle((path[0]*1.5)+5, (path[1]*1.5)+101, 2);
             c.setFill(Color.BLUE);
             drawnPoints.add(c);
             pane.getChildren().add(c);
